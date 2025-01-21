@@ -1,5 +1,6 @@
 def GetApiKey(key):
     api_keys = {
         'ethiopia'  : '',
-        'nigeria'   : ''}
+        'nigeria'   : ''
+        'ethiopia'  : ''}
     return api_keys[key]
