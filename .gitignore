@@ -174,3 +174,4 @@ cython_debug/
 
 api_keys.py
 resources/
+dep_gen_africa_qc_env
