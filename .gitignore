@@ -170,6 +170,7 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# more files to exclude
+# more files and to exclude
 
-ApiKeys.py
+api_keys.py
+resources/
