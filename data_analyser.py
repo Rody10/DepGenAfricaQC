@@ -17,12 +17,70 @@ class DataAnalyser:
         self.resource_dir = resource_dir
         self.site = site
     
-    def instrument_outliers(self, instrument_data, data_frame, instrument_key)
-        {
+    def instrument_outliers(self, instrument_data, data_frame, instrument_key):
+
             for col in instrument_data.columns:
                 if col in self.ignored_cols:
                     continue
-        }
+                data = instrument_data[col]
+
+                # Skip iteration if all data is NaN
+                if data.dropna().size == 0:
+                    continue
+
+                data = data.dropna()
+                print(data)
+                
+
+                # Remove -999 (missing data)  
+                data = data[data != -999]
+
+                q1 = data.quantile(0.25)
+                q3 = data.quantile(0.75)
+                mean = np.round(data.mean(),1)
+                std = np.round(data.std(),1)
+                median = np.round(data.median(),1)
+                iqr = q3 - q1
+
+                # Skip iteration if IQR = 0
+                if iqr == 0:
+                    continue
+
+                upper_limit_iqr = q3 + 1.5 * iqr
+                lower_limit_iqr = q1 - 1.5 * iqr
+
+                upper_limit_std = mean + std * 3
+                lower_limit_std = mean - std * 3
+
+                upper_limit = max(upper_limit_iqr, upper_limit_std)
+                lower_limit = min(lower_limit_iqr, lower_limit_std)
+
+                # Find outliers i.e. values outside the range (q1 - 1.5 * iqr, q3 + 1.5 * iqr)
+                mask = data.between(lower_limit, upper_limit, inclusive='both')
+                outliers = data[~mask].dropna()
+
+                # Skip iteration if there are no outliers
+                if outliers.size == 0:
+                    continue
+
+                # self.plot_histogram(data, col, outliers)
+
+                outliers = outliers.to_frame()
+
+                outliers.rename(columns={col:'Value'}, inplace=True)
+                outliers['Data Field'] = col
+                outliers['Instrument'] = instrument_key
+                # outliers['Median'] = median
+                outliers['Lower Limit'] = lower_limit
+                outliers['Upper Limit'] = upper_limit
+
+                # outliers['Limit'] = np.where( ( outliers['Value'] >= upper_limit ), upper_limit, lower_limit )
+                # outliers['Comment'] = ''
+
+                data_frame = pd.concat([data_frame, outliers]) #data_frame = data_frame.append(outliers)
+
+            return data_frame
+
 
     def write_outliers_report(self, outliers_xlsx_writer):
         exceptions = RedcapApiHandler(self.site).get_exceptions_from_redcap()

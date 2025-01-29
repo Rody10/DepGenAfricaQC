@@ -36,7 +36,7 @@ class RedcapApiHandler:
         return df
     
     def get_exceptions_from_redcap(self):
-        report_ids = {'ethiopia': 63427, 'nigeria': 0}
+        report_ids = {'ethiopia': 63660, 'nigeria': 0} # ethiopia currently has 63660, why 63427
         site_ids = {'ethiopia': 1, 'nigeria': 2}
         report_id = report_ids[self.site]
         site_id = site_ids[self.site]
@@ -66,7 +66,6 @@ class RedcapApiHandler:
             df = df[df['site'] == site_id]
             df = df[['data_field']]
             df.rename(columns={'data_field': 'Data Field'}, inplace=True)
-
         return df
 
 

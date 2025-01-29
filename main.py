@@ -1,5 +1,7 @@
+from data_analyser import DataAnalyser
 from redcap_api_handler import RedcapApiHandler
 from datetime import datetime
+
 import xlsxwriter
 import pandas as pd
 
@@ -16,7 +18,8 @@ def main():
     print('successfully saved data to csv file')
     # Generate outliers
     outliers_writer = pd.ExcelWriter(outputDir + 'outliers_{}_{}.xlsx'.format(site, datestr), engine='xlsxwriter')
-
+    DataAnalyser(outputDir, data, site).write_outliers_report(outliers_writer)
+    outliers_writer.close() #outliers_writer.save()
 
 if __name__ == '__main__':
     main()
