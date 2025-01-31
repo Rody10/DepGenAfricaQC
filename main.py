@@ -16,10 +16,14 @@ def main():
     # try writing data to csv
     data.to_csv(csv, index=False)
     print('successfully saved data to csv file')
+
     # Generate outliers
     outliers_writer = pd.ExcelWriter(outputDir + 'outliers_{}_{}.xlsx'.format(site, datestr), engine='xlsxwriter')
     DataAnalyser(outputDir, data, site).write_outliers_report(outliers_writer)
     outliers_writer.close() #outliers_writer.save()
+
+    # Generate missing report
+    
 
 if __name__ == '__main__':
     main()
